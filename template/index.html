@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <!-- Fuentes: cambiar por las de la marca. El compilador las baja y las cachea. -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700;9..40,800&family=Space+Mono:wght@400;700&display=block"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      /* MARCA: cambiar estos valores y nada más para adaptar la plantilla */
+      :root {
+        --bg: #09090b;      /* fondo */
+        --fg: #fafafa;      /* texto */
+        --card: #161618;    /* tarjetas */
+        --border: #27272a;  /* bordes */
+        --muted: #a1a1aa;   /* texto secundario (contraste >= 4.5:1 con --bg) */
+        --accent: #22c55e;  /* color de marca (contraste >= 3:1 con --bg si se usa en títulos) */
+        --on-accent: #052e16; /* texto sobre botón de acento */
+        --font: "DM Sans", sans-serif;
+        --font-mono: "Space Mono", monospace;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1080px; height: 1920px; overflow: hidden;
+        background: var(--bg); color: var(--fg); font-family: var(--font);
+      }
+      #root { position: relative; width: 100%; height: 100%; }
+      .glow {
+        position: absolute; width: 1400px; height: 1400px; left: -160px; top: 260px;
+        background: radial-gradient(circle, color-mix(in srgb, var(--accent) 16%, transparent) 0%, transparent 60%);
+      }
+
+      /* Zona segura Reels/TikTok: nada importante arriba de y=260 ni abajo de y=1600 */
+      .scene {
+        position: absolute; inset: 0;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        padding: 260px 80px 320px; text-align: center;
+      }
+      .mono { font-family: var(--font-mono); }
+      .accent { color: var(--accent); }
+      .kicker { font-size: 30px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
+      .big { font-size: 96px; font-weight: 800; line-height: 1.03; letter-spacing: -0.045em; }
+      .sub { margin-top: 44px; font-size: 40px; line-height: 1.35; color: var(--muted); max-width: 860px; }
+      .card {
+        background: var(--card); border: 2px solid var(--border); border-radius: 36px;
+        padding: 46px; width: 900px; text-align: left; margin-top: 60px;
+      }
+      .row {
+        display: flex; justify-content: space-between; align-items: baseline;
+        font-size: 38px; padding: 20px 0; border-bottom: 2px solid var(--border); color: var(--muted);
+      }
+      .row:last-child { border-bottom: 0; }
+      .row .mono { color: var(--fg); font-size: 48px; font-weight: 700; }
+      .chips { margin-top: 70px; display: flex; flex-wrap: wrap; justify-content: center; gap: 22px; max-width: 920px; }
+      .chip {
+        font-size: 40px; font-weight: 500; padding: 24px 40px; border-radius: 999px;
+        background: var(--card); border: 2px solid var(--border);
+      }
+      .chip::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+      .logo { font-size: 220px; font-weight: 800; letter-spacing: -0.05em; line-height: 1; }
+      .tagline { margin-top: 30px; font-size: 40px; color: var(--muted); }
+      .cta {
+        margin-top: 100px; font-size: 52px; font-weight: 700; padding: 34px 64px; border-radius: 28px;
+        background: var(--accent); color: var(--on-accent);
+      }
+      .domain { margin-top: 80px; font-size: 46px; }
+    </style>
+  </head>
+  <body>
+    <!-- data-duration del root = fin de la última escena -->
+    <div id="root" data-composition-id="main" data-start="0" data-duration="16" data-width="1080" data-height="1920">
+      <div class="glow"></div>
+
+      <!-- 1. Gancho: el problema en una pregunta (0–3.4s) -->
+      <section id="s1" class="scene clip" data-start="0" data-duration="3.4" data-track-index="1">
+        <div class="kicker">Para quién es</div>
+        <h1 class="big" style="margin-top: 30px">¿Todavía hacés<br />esto <span class="accent">a mano</span>?</h1>
+        <p class="sub">Una línea que explica el dolor.</p>
+      </section>
+
+      <!-- 2. Demo: el producto haciendo su magia, con un número que cuenta (3.4–8.4s) -->
+      <section id="s2" class="scene clip" data-start="3.4" data-duration="5" data-track-index="1">
+        <h2 class="big" style="font-size: 84px">Resolvelo en<br /><span class="accent">segundos</span></h2>
+        <div class="card">
+          <div class="row"><span>Dato uno</span><span class="mono" id="n1">0</span></div>
+          <div class="row"><span>Dato dos</span><span class="mono" id="n2">0</span></div>
+          <div class="row"><span>Total</span><span class="mono accent" id="n3">$ 0</span></div>
+        </div>
+      </section>
+
+      <!-- 3. Qué incluye (8.4–12s) -->
+      <section id="s3" class="scene clip" data-start="8.4" data-duration="3.6" data-track-index="1">
+        <h2 class="big" style="font-size: 84px">Todo en un<br /><span class="accent">solo lugar</span></h2>
+        <div class="chips">
+          <span class="chip">Función uno</span>
+          <span class="chip">Función dos</span>
+          <span class="chip">Función tres</span>
+          <span class="chip">Función cuatro</span>
+        </div>
+      </section>
+
+      <!-- 4. Marca + llamada a la acción (12–16s) -->
+      <section id="s4" class="scene clip" data-start="12" data-duration="4" data-track-index="1">
+        <div class="logo">marca</div>
+        <div class="tagline">El tagline de la marca</div>
+        <div class="cta">Probalo gratis</div>
+        <div class="domain mono">marca.com</div>
+      </section>
+    </div>
+
+    <script>
+      // Helpers. Todo en tiempos absolutos (segundos) sobre UN timeline pausado.
+      const ease = "expo.out";
+      const money = (n) => "$ " + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      const int = (n) => Math.round(n).toString();
+      // Número que cuenta de 0 a `to`. Funciona con seek porque solo escribe texto.
+      const countTo = (tl, sel, to, at, dur, fmt = int) => {
+        const o = { v: 0 };
+        const el = document.querySelector(sel);
+        tl.to(o, { v: to, duration: dur, ease: "power2.out", onUpdate: () => (el.textContent = fmt(o.v)) }, at);
+      };
+      const enter = (tl, sel, at, extra = {}) => tl.from(sel, { opacity: 0, y: 50, duration: 0.6, ease, ...extra }, at);
+      const leave = (tl, sel, at) => tl.to(sel, { opacity: 0, y: -60, duration: 0.4, ease: "power2.in" }, at);
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo(".glow", { scale: 0.9, opacity: 0.7 }, { scale: 1.1, opacity: 1, duration: 16, ease: "sine.inOut" }, 0);
+
+      // 1. Gancho
+      enter(tl, "#s1 .kicker", 0.1);
+      enter(tl, "#s1 .big", 0.2, { y: 70, duration: 0.8 });
+      enter(tl, "#s1 .sub", 1.2);
+      leave(tl, "#s1", 3.0);
+
+      // 2. Demo
+      enter(tl, "#s2 .big", 3.4);
+      enter(tl, "#s2 .card", 3.55, { y: 120, duration: 0.8 });
+      countTo(tl, "#n1", 47, 4.2, 1.3);
+      countTo(tl, "#n2", 128, 4.3, 1.3);
+      countTo(tl, "#n3", 229150, 4.6, 1.6, money);
+      leave(tl, "#s2", 8.0);
+
+      // 3. Qué incluye
+      enter(tl, "#s3 .big", 8.4);
+      tl.from("#s3 .chip", { opacity: 0, y: 40, scale: 0.85, duration: 0.5, ease: "back.out(2)", stagger: 0.12 }, 8.8);
+      leave(tl, "#s3", 11.6);
+
+      // 4. Marca + CTA
+      enter(tl, "#s4 .logo", 12, { y: 80, duration: 1 });
+      enter(tl, "#s4 .tagline", 12.4);
+      tl.from("#s4 .cta", { opacity: 0, scale: 0.8, duration: 0.6, ease: "back.out(2)" }, 13);
+      enter(tl, "#s4 .domain", 13.4);
+      tl.to("#s4 .cta", { scale: 1.05, duration: 0.5, yoyo: true, repeat: 1, ease: "sine.inOut" }, 14.4);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,8 @@
+node_modules/
+# Los reels son de cada usuario (marcas, clientes): no se suben al repo público
+reels/*
+!reels/.gitkeep
+.DS_Store
+Thumbs.db
+.env*
+*.log
