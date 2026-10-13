@@ -45,9 +45,10 @@ mirando las imágenes y te deja `marcas/<marca>/subir/` así:
 ```
 subir/
   LEEME.txt          los pasos para publicar, en orden
-  TEXTOS.md          el texto de cada publicación, listo para copiar
+  PLAN.md            el plan: perfil, bio, calendario de 4 semanas
+  TEXTOS.md          todos los textos juntos
   grilla.png         cómo va a quedar tu perfil
-  1-feed/            las 9 publicaciones en carpetas numeradas (carruseles, reels con su tapa, posts)
+  1-feed/            las 9 publicaciones en carpetas numeradas, cada una con su texto.txt listo para pegar
   2-destacadas/      las portadas y las historias de cada destacada
   3-perfil/          foto de perfil y portada
 ```

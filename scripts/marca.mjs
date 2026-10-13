@@ -169,16 +169,31 @@ function pack() {
     copyFileSync(src, join(dest, folder, file))
   }
   const steps = []
+  // Captions: "## N · …" sections of TEXTOS.md, first code block of each → texto.txt in post N's folder
+  const captions = {}
+  const textos = join(dir, "TEXTOS.md")
+  if (existsSync(textos)) {
+    for (const part of readFileSync(textos, "utf8").split(/^## /m).slice(1)) {
+      const n = part.match(/^(\d+)/)?.[1]
+      const body = part.match(/```[a-z]*\r?\n([\s\S]*?)```/)?.[1]
+      if (n && body) captions[n] = body.trim() + "\n"
+    }
+  }
 
   plan.feed.forEach((item, i) => {
     const folder = join("1-feed", `${i + 1} ${item.tipo} - ${item.nombre}`)
+    const caption = captions[String(item.texto ?? i + 1)]
+    if (caption) {
+      mkdirSync(join(dest, folder), { recursive: true })
+      writeFileSync(join(dest, folder, "texto.txt"), caption)
+    } else console.warn(`  ! sin texto para "${item.nombre}" en TEXTOS.md`)
     if (item.tipo === "reel") {
       put(join(root, "reels", item.reel, "renders", `${item.reel}.mp4`), folder, "reel.mp4")
       put(imagesOf(item.tapa)[0] ?? "", folder, "tapa.png")
     } else {
       imagesOf(item.piezas).forEach((img, j) => put(img, folder, `${String(j + 1).padStart(2, "0")}.png`))
     }
-    steps.push(`  ${i + 1}. ${item.tipo} · ${item.nombre}${item.texto ? `  (texto ${item.texto} de TEXTOS.md)` : ""}`)
+    steps.push(`  ${i + 1}. ${item.tipo} · ${item.nombre}`)
   })
 
   const highlights = plan.destacadas ?? []
@@ -192,16 +207,18 @@ function pack() {
     const src = p.includes("/") || p.endsWith(".png") ? join(dir, p) : imagesOf(p)[0] ?? ""
     put(src, "3-perfil", `${p.split("/").pop().replace(/\.png$/, "")}.png`)
   }
-  for (const f of ["TEXTOS.md", "grilla.png"]) if (existsSync(join(dir, f))) copyFileSync(join(dir, f), join(dest, f))
+  for (const f of ["PLAN.md", "TEXTOS.md", "grilla.png"]) if (existsSync(join(dir, f))) copyFileSync(join(dir, f), join(dest, f))
 
   const links = highlights.filter((h) => h.link).map((h) => `  - ${h.nombre}: ${h.link}`)
   writeFileSync(join(dest, "LEEME.txt"), [
     `Cómo subir todo (${name})`,
     "",
-    "PERFIL (antes de publicar nada): cuenta de empresa, foto (3-perfil), nombre, bio, link y botón de contacto. Están en el PLAN.",
+    "PERFIL (antes de publicar nada): cuenta de empresa, foto (3-perfil), nombre, bio, link y botón de contacto.",
+    "  Todo eso está en PLAN.md, sección 2. Mirá grilla.png para ver cómo va a quedar el perfil.",
     "",
     "FEED: subir en este orden (la primera queda abajo de todo en el perfil):",
     ...steps,
+    "  En cada carpeta está texto.txt: es lo que va en la publicación, listo para copiar y pegar.",
     "  Carruseles: elegir las imágenes en orden (01, 02…), recorte 4:5.",
     "  Reels: subir reel.mp4, Editar portada → Agregar desde la galería → tapa.png, centrarla en la vista del perfil.",
     "  Sumar audio desde la app, bajito. Fijar las 3 publicaciones que indique el PLAN.",

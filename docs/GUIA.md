@@ -16,7 +16,7 @@ De la web, el repo o una charla con el dueño sacamos:
 - **Qué vende y a quién**, en una frase cada cosa.
 - **El dolor del cliente**: qué hace hoy sin la marca (anota en un cuaderno, compra pan de supermercado…).
 - **El lema que la marca ya usa.** Es de la marca: no se cambia por SEO ni porque a la IA se le ocurra otro mejor.
-- **Colores, fuentes y logo.** Si no hay, se elige una paleta sobria: fondo oscuro, un solo acento.
+- **Colores, fuentes y logo.** Si no hay, se elige una paleta sobria: un fondo (oscuro o claro, el de la web) y un solo acento. Para fondo claro, en las piezas: `--grid-line: rgba(0,0,0,.05)` y el acento un tono más oscuro si no llega al contraste.
 - **Datos reales**: precios, horarios, funciones, zonas. Lo que no está confirmado no se publica.
 
 **Reglas que no se negocian:**
@@ -131,13 +131,15 @@ contadas con el link con utm. Una vez por semana: qué publicación trajo más v
 ```
 subir/
   LEEME.txt                 los pasos, en orden, con el orden inverso de las destacadas
-  TEXTOS.md                 los textos para copiar
+  PLAN.md, TEXTOS.md        el plan y todos los textos juntos
   grilla.png                cómo queda el perfil
-  1-feed/1 carrusel - …/    01.png, 02.png…
-  1-feed/2 reel - …/        reel.mp4 + tapa.png
+  1-feed/1 carrusel - …/    01.png, 02.png… + texto.txt (lo que va en la publicación)
+  1-feed/2 reel - …/        reel.mp4 + tapa.png + texto.txt
   2-destacadas/             portada N - nombre.png + una carpeta de historias por destacada
   3-perfil/                 perfil.png, portada.png
 ```
+
+Está pensada para pasarla tal cual (un Drive, un zip): quien publica abre la carpeta 1, sube las imágenes y pega el `texto.txt`; después la 2, y así.
 
 **TikTok:** los reels van tal cual (1080×1920).
 
