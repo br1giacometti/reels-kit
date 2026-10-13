@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="es">
+<!--
+  Piezas fijas de una marca: carruseles (1080×1350), posts, tapas de reels, portadas de
+  destacadas e historias (1080×1920). Cada <section data-out="nombre"> se guarda como
+  piezas/out/nombre.png con: npm run piezas -- <marca>
+
+  Para adaptarla:
+  1. Cambiá MARCA (abajo, en el script) y las variables de :root (colores y fuentes).
+  2. Reemplazá el contenido de cada pieza. Los bloques disponibles:
+       carrusel(clave, [lámina, …])  → clave-1.png, clave-2.png… con logo, contador, dominio y "deslizá →"
+       post(clave, html)             → clave-1.png (imagen sola)
+       tapaReel(clave, html)         → tapa-<clave>.png (se ve recortada a 3:4 en la grilla)
+       destacada(clave, icono)       → destacada-<clave>.png (portada redonda)
+       historias(clave, etiqueta, [html, …]) → historia-<clave>-1.png…
+     Dentro de cada lámina: .kicker, .title (.xl .md .sm), .acc (color de acento), .sub, .pill, .btn,
+     .card + .row (.total), .checks + .chip (.on), .num (número grande), .vs (comparación), .price, .list.
+  3. Los nombres tienen que coincidir con subir.json.
+  Nada de datos personales del dueño ni datos inventados (precios, clientes, premios).
+-->
+<head>
+<meta charset="UTF-8" />
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Space+Mono:wght@400;700&display=block" rel="stylesheet" />
+<style>
+  :root {
+    --bg:#0c0a09; --card:#1c1917; --card2:#151311; --border:#292524;
+    --fg:#fafaf9; --muted:#a8a29e; --dim:#78716c;
+    --acc:#f59e0b; --acc-ink:#1c1306; --acc-glow:rgba(245,158,11,.14); --acc-soft:rgba(245,158,11,.15);
+    --font:"DM Sans", sans-serif; --mono:"Space Mono", monospace;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#000; font-family:var(--font); color:var(--fg); display:flex; flex-direction:column; align-items:flex-start; gap:40px; padding:40px; }
+  .slide { position:relative; overflow:hidden; width:1080px; height:1350px; background:var(--bg); display:flex; flex-direction:column; padding:90px; flex-shrink:0; }
+  .slide.story { height:1920px; padding:250px 90px 330px; }
+  .slide::before { content:""; position:absolute; inset:0; background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px); background-size:64px 64px; pointer-events:none; }
+  .slide::after { content:""; position:absolute; left:50%; top:-10%; width:1300px; height:1100px; margin-left:-650px; background:radial-gradient(ellipse at center, var(--acc-glow) 0%, transparent 62%); pointer-events:none; }
+  .slide.glow-mid::after { top:22%; }
+  .slide > * { position:relative; z-index:1; }
+  .top, .bottom { display:flex; justify-content:space-between; align-items:center; }
+  .bottom { margin-top:auto; }
+  .wm { font-size:46px; font-weight:700; letter-spacing:-0.045em; line-height:1; }
+  .count, .url, .mono { font-family:var(--mono); }
+  .count { font-size:24px; color:var(--dim); }
+  .url { font-size:26px; color:var(--dim); }
+  .swipe { font-size:26px; color:var(--muted); }
+  .body { flex:1; display:flex; flex-direction:column; justify-content:center; gap:40px; }
+  .kicker { font-family:var(--mono); font-size:24px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); }
+  .title { font-size:100px; font-weight:700; line-height:1.02; letter-spacing:-0.04em; }
+  .title.xl { font-size:116px; } .title.md { font-size:82px; } .title.sm { font-size:68px; }
+  .acc { color:var(--acc); }
+  .sub { font-size:38px; line-height:1.4; color:var(--muted); max-width:860px; }
+  .q { color:var(--fg); font-weight:500; font-size:44px; }
+  .pill { align-self:flex-start; display:inline-flex; padding:14px 30px; border-radius:999px; background:var(--acc-soft); color:var(--acc); font-size:32px; font-weight:500; }
+  .btn { align-self:flex-start; display:inline-flex; padding:22px 42px; border-radius:16px; background:var(--fg); color:var(--bg); font-size:34px; font-weight:700; }
+  .card { background:var(--card); border:2px solid var(--border); border-radius:32px; padding:40px; }
+  .row { display:flex; justify-content:space-between; align-items:baseline; padding:14px 0; font-size:34px; }
+  .row .mono { font-size:32px; }
+  .row.total { border-top:2px solid var(--border); margin-top:12px; padding-top:26px; font-weight:700; font-size:38px; }
+  .row.total .mono { color:var(--acc); font-size:48px; font-weight:700; }
+  .checks { display:flex; flex-wrap:wrap; gap:18px; }
+  .chip { display:inline-flex; gap:12px; align-items:center; padding:18px 28px; border-radius:18px; background:var(--card); border:2px solid var(--border); font-size:32px; }
+  .chip b { color:var(--acc); }
+  .chip.on { border-color:var(--acc); color:var(--acc); }
+  .num { font-family:var(--mono); font-size:150px; font-weight:700; color:var(--acc); line-height:1; letter-spacing:-0.05em; }
+  .price { font-family:var(--mono); font-size:150px; font-weight:700; letter-spacing:-0.05em; line-height:1; }
+  .price small { font-size:48px; color:var(--muted); letter-spacing:0; }
+  .list { display:flex; flex-direction:column; gap:22px; font-size:38px; }
+  .list div::before { content:"✓  "; color:var(--acc); font-weight:700; }
+  .vs { display:flex; flex-direction:column; gap:18px; }
+  .vs-row { display:grid; grid-template-columns:220px 1fr 70px; align-items:center; gap:20px; padding:30px 34px; border-radius:24px; background:var(--card); border:2px solid var(--border); font-size:34px; }
+  .vs-row .who { font-family:var(--mono); font-size:26px; color:var(--dim); text-transform:uppercase; letter-spacing:.08em; }
+  .vs-row .what { color:var(--muted); }
+  .vs-row .mark { font-size:44px; font-weight:700; text-align:right; }
+  .vs-row .mark.no { color:#ef4444; } .vs-row .mark.meh { color:var(--muted); } .vs-row .mark.yes { color:var(--acc); }
+  .vs-row.win { border-color:var(--acc); background:var(--acc-soft); }
+  .vs-row.win .who { color:var(--acc); } .vs-row.win .what { color:var(--fg); font-weight:500; }
+  .hl { justify-content:center; align-items:center; padding:0; }
+  .hl .icon { width:420px; height:420px; display:flex; align-items:center; justify-content:center; }
+  .hl svg { width:300px; height:300px; stroke:var(--acc); stroke-width:1.6; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .hl .glyph { font-size:260px; font-weight:700; color:var(--acc); letter-spacing:-0.05em; line-height:1; }
+  .center { text-align:center; align-items:center; }
+  .center .pill, .center .btn { align-self:center; }
+  .reel-cover .body { padding:0 0 60px; }
+  .slide.square { height:1080px; }
+  .slide.banner { width:1500px; height:500px; padding:60px 90px; }
+  .profile { justify-content:center; align-items:center; padding:0; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ======================= Datos de la marca ======================= */
+const MARCA = {
+  nombre: "La Espiga",       // va arriba a la izquierda de cada pieza
+  dominio: "@laespiga",      // abajo a la izquierda (web o usuario)
+};
+
+/* ======================= Bloques (no hace falta tocarlos) ======================= */
+const app = document.getElementById("app");
+const slide = (out, html, cls = "") => app.insertAdjacentHTML("beforeend", `<section class="slide ${cls}" data-out="${out}">${html}</section>`);
+const head = (n, t) => `<div class="top"><div class="wm">${MARCA.nombre}</div>${n ? `<div class="count">${n}/${t}</div>` : ""}</div>`;
+const foot = (last) => `<div class="bottom"><div class="url">${MARCA.dominio}</div>${last ? "" : `<div class="swipe">deslizá →</div>`}</div>`;
+const carrusel = (key, slides) => slides.forEach((s, i) =>
+  slide(`${key}-${i + 1}`, `${head(i + 1, slides.length)}<div class="body">${s}</div>${foot(i === slides.length - 1)}`, i === 0 ? "glow-mid" : ""));
+const post = (key, html) => slide(`${key}-1`, `${head()}<div class="body">${html}</div>${foot(true)}`, "glow-mid");
+const tapaReel = (key, title) => slide(`tapa-${key}`, `<div class="body center"><div class="wm" style="font-size:56px">${MARCA.nombre}</div><div class="title xl">${title}</div></div>`, "story glow-mid reel-cover");
+const destacada = (key, icon) => slide(`destacada-${key}`, `<div class="icon">${icon}</div>`, "story hl");
+const historias = (key, label, items) => items.forEach((h, i) => slide(`historia-${key}-${i + 1}`,
+  `<div class="top"><div class="wm" style="font-size:40px">${MARCA.nombre}</div><div class="kicker">${label}</div></div><div class="body">${h}</div>`, "story glow-mid"));
+const vs = (kicker, title, rows) => `<div class="kicker">${kicker}</div><div class="title md">${title}</div><div class="vs">${rows
+  .map(([who, text, mark], i) => `<div class="vs-row${mark === "yes" ? " win" : ""}"><span class="who">${who}</span><span class="what">${text}</span><span class="mark ${mark}">${{ no: "✗", meh: "~", yes: "✓" }[mark]}</span></div>`)
+  .join("")}</div>`;
+// Íconos de línea (estilo Lucide). Sumá los que necesites con el mismo formato.
+const ICON = {
+  info: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
+  menu: '<svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>',
+  chat: '<svg viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>',
+  cart: '<svg viewBox="0 0 24 24"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>',
+  pin: '<svg viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>',
+};
+
+/* ======================= Piezas (ejemplo: panadería ficticia) ======================= */
+
+// Perfil: foto (entra en un círculo) y portada para Discord / X
+slide("perfil", `<div class="wm" style="font-size:190px">${MARCA.nombre}</div>`, "square profile glow-mid");
+slide("portada", `<div class="body" style="flex-direction:row;justify-content:space-between;align-items:center;padding:0 20px">
+  <div class="wm" style="font-size:130px">${MARCA.nombre}</div><div class="title sm" style="text-align:right">Pan de verdad,<br><span class="acc">todos los días.</span></div></div>`, "banner glow-mid");
+
+// 1 · Presentación: qué es la marca en 4 láminas
+carrusel("p1", [
+  `<div class="kicker">Panadería de barrio</div><div class="title xl">Pan de verdad,<br><span class="acc">todos los días.</span></div><div class="sub">Masa madre, horno a leña y cero apuro.</div>`,
+  `<div class="title md">Lo más <span class="acc">pedido.</span></div><div class="card">
+    <div class="row"><span>Pan de campo</span><span class="mono">$ 4.500</span></div>
+    <div class="row"><span>Medialunas x 6</span><span class="mono">$ 3.600</span></div>
+    <div class="row"><span>Budín de limón</span><span class="mono">$ 5.200</span></div>
+    <div class="row total"><span>Combo desayuno</span><span class="mono">$ 7.900</span></div></div>`,
+  `<div class="title md">Pedís por WhatsApp, <span class="acc">pasás a buscar.</span></div><div class="checks"><div class="chip"><b>1</b>Escribís</div><div class="chip"><b>2</b>Te confirmamos</div><div class="chip"><b>3</b>Retirás caliente</div></div>`,
+  `<div class="title xl">Te esperamos<br><span class="acc">a la mañana.</span></div><div class="sub">De martes a domingo, desde las 7.</div><div class="btn">Pedí por WhatsApp →</div>`,
+]);
+
+// 2 · Comparación: el formato que más se guarda y se comparte
+carrusel("p2", [
+  `<div class="kicker">¿De qué está hecho tu pan?</div><div class="title xl">Industrial<br><span class="acc">o de verdad.</span></div>`,
+  vs("Diferencia 1", 'Los <span class="acc">ingredientes</span>', [["Industrial", "Conservantes y mejoradores", "no"], ["La Espiga", "Harina, agua, sal y tiempo", "yes"]]),
+  vs("Diferencia 2", 'El <span class="acc">tiempo</span>', [["Industrial", "2 horas de punta a punta", "no"], ["La Espiga", "24 horas de fermentación", "yes"]]),
+  `<div class="title xl">Probá la<br><span class="acc">diferencia.</span></div><div class="btn">Pedí por WhatsApp →</div>`,
+]);
+
+// 3 · Lista numerada: tip para guardar
+carrusel("p3", [
+  `<div class="kicker">Tip · guardalo</div><div class="title xl">3 formas de que el pan te dure <span class="acc">más.</span></div>`,
+  `<div class="num">01</div><div class="title md">En bolsa de tela, <span class="acc">nunca de plástico.</span></div>`,
+  `<div class="num">02</div><div class="title md">Cortado, <span class="acc">al freezer.</span></div><div class="sub">Lo pasás directo a la tostadora.</div>`,
+  `<div class="num">03</div><div class="title md">Del día anterior, <span class="acc">al horno 5 minutos.</span></div>`,
+]);
+
+// 4 · Post único: horarios, precio o promo
+post("p4", `<div class="kicker">Horarios</div><div class="title md">Martes a domingo,<br><span class="acc">7 a 13 y 17 a 21.</span></div>
+  <div class="list"><div>Pedidos por WhatsApp</div><div>Encargos para eventos</div><div>Sin TACC los viernes</div></div><div class="pill">Lunes cerrado</div>`);
+
+// Tapas de reels (el video se hace con npm run new / render)
+tapaReel("reel01", 'Así nace<br><span class="acc">tu pan.</span>');
+
+// Destacadas: portada + historias de cada una
+destacada("nosotros", ICON.info);
+destacada("menu", ICON.menu);
+destacada("pedidos", ICON.chat);
+historias("nosotros", "Nosotros", [
+  `<div class="title xl">Pan de verdad,<br><span class="acc">todos los días.</span></div>`,
+  `<div class="title md">Masa madre y <span class="acc">24 horas</span> de fermentación.</div>`,
+]);
+historias("menu", "Menú", [
+  `<div class="title md">Lo más <span class="acc">pedido.</span></div><div class="card"><div class="row"><span>Pan de campo</span><span class="mono">$ 4.500</span></div><div class="row"><span>Medialunas x 6</span><span class="mono">$ 3.600</span></div></div>`,
+]);
+historias("pedidos", "Pedidos", [
+  `<div class="title md">Pedí por <span class="acc">WhatsApp.</span></div><div class="sub">Te confirmamos y pasás a buscar.</div><div class="pill">[ sticker de link ]</div>`,
+  `<div class="sub q">¿Hacen encargos para eventos?</div><div class="title md"><span class="acc">Sí.</span> Con 48 horas de anticipación.</div>`,
+]);
+</script>
+</body>
+</html>

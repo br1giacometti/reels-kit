@@ -11,6 +11,36 @@ Si te trabás con algo puntual: `npx hyperframes docs <tema>` (temas: `data-attr
 
 Hablale al usuario en su idioma. Los textos del video van en el idioma de la marca.
 
+## Dos pedidos posibles
+
+- **"Haceme un reel"** → seguí el **Flujo** de abajo (solo video).
+- **"Armame el Instagram / TikTok de <marca>"** → seguí **Marca completa**: plan, perfil, grilla de 9,
+  destacadas, reels, textos y una carpeta lista para subir. El método y el porqué están en `docs/GUIA.md`:
+  leela entera antes de empezar (es corta).
+
+## Marca completa
+
+Todo lo de una marca vive en `marcas/<marca>/` (está en `.gitignore`: el repo es público).
+
+1. `npm run marca -- <marca>` copia `plantilla-marca/`: `PLAN.md`, `TEXTOS.md`, `subir.json` y
+   `piezas/index.html` (un ejemplo con una panadería ficticia: reemplazalo entero).
+2. **Entender la marca** (paso 0 de la guía) y completar `PLAN.md`: voz, 4 temas, perfil y bio, las 9 de
+   la grilla, las destacadas, los reels y el calendario. Si el usuario está, mostrale el plan antes de diseñar.
+3. **Piezas fijas** en `marcas/<marca>/piezas/index.html`: cambiá `MARCA` y las variables de `:root`
+   (colores y fuentes de la marca), y armá las piezas con los bloques documentados arriba del archivo
+   (`carrusel`, `post`, `tapaReel`, `destacada`, `historias`, `vs`, perfil y portada).
+   `npm run piezas -- <marca>` → `piezas/out/*.png`. **Mirá las imágenes** (o tiras armadas con ffmpeg)
+   antes de seguir: títulos cortados, una palabra sola en un renglón, contraste.
+4. **Reels:** uno por cada `"tipo": "reel"` de `subir.json`, con el flujo de abajo, nombrados
+   `<marca>-ig-01`, `-02`… El cierre usa el lema de la marca. Partí del primero con `--from`.
+5. **`subir.json`** en el orden de publicación (reels en las posiciones 2, 5 y 8 de las primeras 9).
+   `npm run grilla -- <marca>` → `grilla.png`: el perfil como va a quedar. Revisalo.
+6. **`TEXTOS.md`**: un texto por publicación, con el molde de la guía.
+7. `npm run subir -- <marca>` → `marcas/<marca>/subir/` con todo numerado y un `LEEME.txt` con los pasos.
+
+Reglas de contenido (detalle en la guía): nada inventado; nada personal del dueño si no lo ofrece; el lema
+de la marca no se cambia; datos de ejemplo verosímiles en las pantallas simuladas.
+
 ## Flujo
 
 1. **Entender el producto.** El usuario te da una ruta a un repo, una URL o una descripción.
@@ -79,6 +109,8 @@ Hablale al usuario en su idioma. Los textos del video van en el idioma de la mar
   CSS relativo al contenedor (ej. un círculo de "tap" dentro de cada botón).
 - Los contadores animan un objeto `{ v }` y escriben el texto en `onUpdate`: eso sí está bien.
 - Formateá números a mano (`money()`), no con `toLocaleString`.
+- **Nada de `tl.call()` para cambiar texto:** el renderer posiciona el timeline con `seek` y los callbacks
+  no se disparan. Para un número que se tipea o cambia por pasos, usá un tween con `onUpdate` sobre un índice.
 
 ## Diseño para el teléfono
 
@@ -159,6 +191,11 @@ npm run sheet -- <nombre>                 # tira de 6 cuadros del último render
 npm run render -- <nombre>                # render final
 npm run preview -- <nombre>               # estudio en el navegador (lo usa la persona, no vos)
 npm run doctor                            # verificar dependencias
+
+npm run marca -- <marca>                  # crear marcas/<marca> desde plantilla-marca/
+npm run piezas -- <marca> [filtro]        # piezas fijas → marcas/<marca>/piezas/out/*.png
+npm run grilla -- <marca>                 # grilla.png: el perfil como va a quedar
+npm run subir -- <marca>                  # marcas/<marca>/subir/: todo numerado + LEEME.txt
 ```
 
 ## Estructura
@@ -168,5 +205,9 @@ AGENTS.md            este archivo (Codex, Cursor, Gemini, etc. lo leen solos)
 CLAUDE.md            apunta acá (para Claude Code)
 template/            punto de partida de cada reel
 reels/<nombre>/      un reel: index.html, NOTAS.md, assets/, renders/ (todo reels/ está en .gitignore)
-scripts/reel.mjs     los comandos de arriba
+plantilla-marca/     punto de partida de una marca: PLAN.md, TEXTOS.md, subir.json, piezas/index.html
+marcas/<marca>/      una marca (en .gitignore): plan, textos, piezas, grilla.png, subir/
+docs/GUIA.md         el método completo para Instagram y TikTok
+scripts/reel.mjs     comandos de video
+scripts/marca.mjs    comandos de marca (piezas, grilla, subir)
 ```

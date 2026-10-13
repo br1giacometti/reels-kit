@@ -2,7 +2,7 @@
   "name": "reels-kit",
   "private": true,
   "type": "module",
-  "description": "Reels y TikToks escritos en HTML y renderizados a MP4 con HyperFrames, pensados para hacerlos con una IA.",
+  "description": "El Instagram y TikTok completo de una marca, hecho por tu IA: plan, grilla, destacadas, reels (HTML → MP4 con HyperFrames) y textos.",
   "engines": {
     "node": ">=22"
   },
@@ -13,7 +13,11 @@
     "render": "node scripts/reel.mjs render",
     "sheet": "node scripts/reel.mjs sheet",
     "preview": "node scripts/reel.mjs preview",
-    "doctor": "hyperframes doctor"
+    "doctor": "hyperframes doctor",
+    "marca": "node scripts/marca.mjs nueva",
+    "piezas": "node scripts/marca.mjs piezas",
+    "grilla": "node scripts/marca.mjs grilla",
+    "subir": "node scripts/marca.mjs subir"
   },
   "devDependencies": {
     "hyperframes": "0.8.149"

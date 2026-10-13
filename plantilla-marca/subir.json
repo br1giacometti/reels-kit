@@ -1,0 +1,15 @@
+{
+  "feed": [
+    { "tipo": "carrusel", "nombre": "Presentacion", "piezas": "p1", "texto": 1 },
+    { "tipo": "reel", "nombre": "Asi nace tu pan", "reel": "marca-ig-01", "tapa": "tapa-reel01", "texto": 2 },
+    { "tipo": "carrusel", "nombre": "Industrial o de verdad", "piezas": "p2", "texto": 3 },
+    { "tipo": "carrusel", "nombre": "Que el pan dure mas", "piezas": "p3", "texto": 4 },
+    { "tipo": "post", "nombre": "Horarios", "piezas": "p4", "texto": 5 }
+  ],
+  "destacadas": [
+    { "nombre": "Nosotros", "portada": "destacada-nosotros", "historias": "historia-nosotros" },
+    { "nombre": "Menu", "portada": "destacada-menu", "historias": "historia-menu" },
+    { "nombre": "Pedidos", "portada": "destacada-pedidos", "historias": "historia-pedidos", "link": "historia 1 → el link de WhatsApp de la marca" }
+  ],
+  "perfil": ["perfil", "portada"]
+}
